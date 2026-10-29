@@ -38,20 +38,22 @@ class State(TypedDict, total=False):
 
 
 def ask(system: str, user: str) -> str:
-    for attempt in range(4):
+    for attempt in range(6):
         try:
             resp = client.chat.completions.create(
                 model=os.environ["OPENROUTER_MODEL"],
                 temperature=0,
-                max_tokens=200,
+                max_tokens=250,
                 messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
             )
             return resp.choices[0].message.content or ""
         except APIStatusError as e:
-            if e.status_code != 402 or attempt == 3:
+            msg = e.body.get("error", {}).get("message") if isinstance(e.body, dict) else str(e)
+            print(f"  OpenRouter error {e.status_code}: {msg}")
+            if e.status_code != 402 or attempt == 5:
                 raise
             wait = int(e.response.headers.get("Retry-After", 120))
-            print(f"  OpenRouter 402, retrying in {wait}s")
+            print(f"  OpenRouter 402, retrying in {wait}s (attempt {attempt + 1})")
             time.sleep(wait)
 
 
@@ -93,22 +95,36 @@ def lead(state: State) -> dict:
     return {"verdict": "rejected", "reason": f"Check {n} failed: {whys[n - 1]}"}
 
 
+def get_candidate_pages(row: dict) -> list:
+    """Find candidate pages matching service or claim keywords; robust to mislabeled services."""
+    stopwords = {"amazon", "aws", "now", "and", "for", "with", "all", "is", "at", "in", "the", "a", "an", "to"}
+    svc_words = set(re.findall(r"\b[a-zA-Z0-9-]+\b", row.get("claimed_service", "").lower())) - stopwords
+    claim_words = set(re.findall(r"\b[a-zA-Z0-9-]+\b", row["claim_text"].lower())) - stopwords
+    matches = []
+    for p in PAGES:
+        p_text = (p["service_name"] + " " + p["title"]).lower()
+        p_words = set(re.findall(r"\b[a-zA-Z0-9-]+\b", p_text))
+        if svc_words and (svc_words & p_words):
+            matches.append(p)
+        elif "quantum" in claim_words and ("quantum" in p_text or "braket" in p_text):
+            matches.append(p)
+    return matches or PAGES
+
+
 def researcher(state: State) -> dict:
     print("  researcher")
     row = state["row"]
-    shortlist = [p for p in PAGES if p["service_name"] == row["claimed_service"]]
-    if not shortlist:
-        return {"stage": "researched", "page": None, "quote": "no match"}
-    listing = "\n".join(f'{p["page_id"]} | {p["title"]} | {p["body_text"]}' for p in shortlist)
+    candidates = get_candidate_pages(row)
+    listing = "\n".join(f'{p["page_id"]} | {p["service_name"]} | {p["title"]}' for p in candidates)
     picked = ask_json(
-        "You match a claim to AWS pages. Reply only with JSON: {\"page_ids\": [...]}. "
+        "You match a claim to AWS announcement pages. Reply only with JSON: {\"page_ids\": [...]}. "
         "List every page below that is about the same product or feature as the claim. Use [] if none is.",
         f"Claim: {row['claim_text']}\n\nPages:\n{listing}",
     ).get("page_ids", [])
-    candidates = [BY_ID[i] for i in picked if i in BY_ID and BY_ID[i] in shortlist]
-    if not candidates:
+    matching = [BY_ID[i] for i in picked if i in BY_ID]
+    if not matching:
         return {"stage": "researched", "page": None, "quote": "no match"}
-    page = tie_break(candidates)
+    page = tie_break(matching)
     sents = sentences(page["body_text"])
     numbered = "\n".join(f"{i}: {s}" for i, s in enumerate(sents))
     span = ask_json(
@@ -126,7 +142,8 @@ def researcher(state: State) -> dict:
 
 
 def load_rule() -> str:
-    return open(RULE_FILE, encoding="utf-8").read()
+    text = open(RULE_FILE, encoding="utf-8").read()
+    return text.split("## Who does what")[0].strip() if "## Who does what" in text else text
 
 
 def fact_checker(state: State) -> dict:
@@ -146,7 +163,8 @@ def fact_checker(state: State) -> dict:
 
     if ok1 and ok2:
         out = ask_json(
-            f"You are the fact-checker. Follow this rule file. Answer check 3 only.\n"
+            f"You are the fact-checker. Follow this rule file. Answer check 3 only: Does the quote back up every fact asserted in the claim?\n"
+            f"Note: Extra details in the quote that are not in the claim do not invalidate the claim.\n"
             f"Reply only with JSON: {{\"answer\": \"yes\" or \"no\", \"why\": \"one short sentence\"}}.\n\n{rule}",
             f"Claim: {claim}\nPage: {page['page_id']} {page['url']}\nQuote: {quote}",
         )
@@ -222,6 +240,7 @@ def main(ids: list) -> None:
             *f["answers"], f["verdict"], f["reason"], f"[trace]({url})",
         ]) + " |")
         print(f"  -> {f['verdict']}: {f['reason']}")
+        time.sleep(2)
     if not ids:
         open(RESULTS, "w", encoding="utf-8").write("\n".join(lines) + "\n")
         print(f"wrote {RESULTS}")

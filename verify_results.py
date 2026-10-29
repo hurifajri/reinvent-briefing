@@ -28,4 +28,17 @@ for r in rows:
         errors.append(f"{cid}: reason does not name the failed check")
 
 print("\n".join(errors) if errors else f"ok: {len(rows)} rows, quotes exact, no blanks, {len(rows)} distinct traces")
-sys.exit(1 if errors else 0)
+
+# Verify audit.md
+audit_lines = [l for l in open("audit.md", encoding="utf-8").read().splitlines() if re.match(r"^\|\s*\*\*C-", l)]
+if len(audit_lines) != 5:
+    errors.append(f"audit.md: expected 5 candidate rows, got {len(audit_lines)}")
+audit_traces = re.findall(r"\((https://aws\.smith\.langchain\.com/public/[^)]+)\)", open("audit.md").read())
+if len(audit_traces) != 5 or len(set(audit_traces)) != 5:
+    errors.append(f"audit.md: expected 5 distinct trace links, got {len(set(audit_traces))}")
+
+if errors:
+    print("ERRORS:", errors)
+    sys.exit(1)
+print("ok: audit.md has 5 rows and 5 distinct trace links")
+sys.exit(0)
