@@ -1,6 +1,6 @@
 # Confirmed means
 
-A claim is judged only against the AWS snapshot in `data/aws-official-source-snapshot-2025-11-03.json`.
+A claim is judged only against the AWS snapshot in `data/aws_official_source_snapshot.json`.
 It is **confirmed** only if every answer below is yes.
 
 1. Is the source page on aws.amazon.com? (yes/no)
@@ -24,6 +24,11 @@ Checks are answered in order, and the first "no" decides the reason.
 | Fact-checker | The claim, the page and the quote | The three yes/no answers, in order, each with a short why |
 
 "No match" means the snapshot has no page for this claim. A page about a related service does not count as a match.
+
+**Tie-break.** If more than one page covers the claim, the researcher uses the most recent page
+(by `published_date`) that states the claim's status, for example "generally available" or "preview".
+If dates tie, it prefers a page that states the status over a page that is silent.
+The researcher hands over one page and one quote, so the fact-checker never has to choose.
 The lead rejects with "Check 1 failed: ..." because there is no source page on aws.amazon.com to check.
 
 ## Worked examples
@@ -77,6 +82,25 @@ Quote: "P6e-GB200 UltraServers are available through EC2 Capacity Blocks for ML 
 | 3. Quote backs every fact | No. The page names one Local Zone, not all commercial Regions. |
 
 Verdict: rejected. Reason: "Check 3 failed: the page says one Dallas Local Zone, the claim says all commercial AWS Regions."
+
+### C-04: confirmed
+
+Claim: "Amazon Aurora DSQL is now generally available as a serverless distributed SQL database with active-active high availability."
+
+Pages that cover this claim: AWS-SRC-002 (preview, 2024-12-03), AWS-SRC-010 (product page, 2025-05-27, silent on status) and AWS-SRC-016 (generally available, 2025-05-27).
+Tie-break: AWS-SRC-002 is older, and AWS-SRC-010 does not state the status, so the researcher uses AWS-SRC-016.
+
+Page: AWS-SRC-016, https://aws.amazon.com/about-aws/whats-new/2025/05/amazon-aurora-dsql-generally-available/
+
+Quote: "Amazon Aurora DSQL is now generally available. Aurora DSQL is a serverless, distributed SQL database with virtually unlimited scale, active-active high availability, PostgreSQL compatibility and no infrastructure to manage."
+
+| Check | Answer |
+|---|---|
+| 1. Page on aws.amazon.com | Yes |
+| 2. Quote copied exactly | Yes |
+| 3. Quote backs every fact | Yes. It says generally available, serverless, distributed SQL database, and active-active high availability. |
+
+Verdict: confirmed.
 
 ### C-05: rejected
 
