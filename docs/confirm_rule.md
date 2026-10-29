@@ -28,6 +28,7 @@ Checks are answered in order, and the first "no" decides the reason.
 **Tie-break.** If more than one page covers the claim, the researcher uses the most recent page
 (by `published_date`) that states the claim's status, for example "generally available" or "preview".
 If dates tie, it prefers a page that states the status over a page that is silent.
+If it is still a tie, it uses the page with the lowest `page_id`.
 The researcher hands over one page and one quote, so the fact-checker never has to choose.
 The lead rejects with "Check 1 failed: ..." because there is no source page on aws.amazon.com to check.
 
@@ -106,9 +107,11 @@ Verdict: confirmed.
 
 Claim: "Amazon S3 Vectors is now GA and lets you store and query vector embeddings natively in S3 at massive scale."
 
-Page: AWS-SRC-015, https://aws.amazon.com/s3/features/vectors/
+Pages that cover this claim: AWS-SRC-014 (What's New, 2025-07-15) and AWS-SRC-015 (product page, 2025-07-15). Both state "preview" and have the same date, so the researcher uses the lowest `page_id`, AWS-SRC-014.
 
-Quote: "Amazon S3 Vectors is in preview and is available in five AWS Regions."
+Page: AWS-SRC-014, https://aws.amazon.com/about-aws/whats-new/2025/07/amazon-s3-vectors-preview-native-support-storing-querying-vectors/
+
+Quote: "Amazon S3 Vectors is now available in preview."
 
 | Check | Answer |
 |---|---|
