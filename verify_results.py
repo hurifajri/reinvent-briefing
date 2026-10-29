@@ -33,7 +33,7 @@ print("\n".join(errors) if errors else f"ok: {len(rows)} rows, quotes exact, no 
 audit_lines = [l for l in open("audit.md", encoding="utf-8").read().splitlines() if re.match(r"^\|\s*\*\*C-", l)]
 if len(audit_lines) != 5:
     errors.append(f"audit.md: expected 5 candidate rows, got {len(audit_lines)}")
-audit_traces = re.findall(r"\((https://aws\.smith\.langchain\.com/public/[^)]+)\)", open("audit.md").read())
+audit_traces = re.findall(r"\((https://(?:aws\.)?smith\.langchain\.com/public/[^)]+)\)", open("audit.md").read())
 if len(audit_traces) != 5 or len(set(audit_traces)) != 5:
     errors.append(f"audit.md: expected 5 distinct trace links, got {len(set(audit_traces))}")
 

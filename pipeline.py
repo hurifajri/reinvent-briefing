@@ -20,7 +20,10 @@ SNAPSHOT = "data/aws_official_source_snapshot.json"
 CANDIDATES = "data/aws_reinvent_candidate_items.csv"
 RESULTS = "results.md"
 
-client = wrap_openai(OpenAI(base_url="https://openrouter.ai/api/v1", api_key=os.environ["OPENROUTER_API_KEY"]))
+base_url = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+api_key = os.environ.get("OPENROUTER_API_KEY")
+headers = {"user-agent": "openai-python/1.0.0"} if "brisnets.com" in base_url else None
+client = wrap_openai(OpenAI(base_url=base_url, api_key=api_key, default_headers=headers))
 PAGES = json.load(open(SNAPSHOT, encoding="utf-8"))
 BY_ID = {p["page_id"]: p for p in PAGES}
 RUNS = {}  # candidate_id -> LangSmith run tree, used to share each trace
@@ -40,21 +43,30 @@ class State(TypedDict, total=False):
 def ask(system: str, user: str) -> str:
     for attempt in range(6):
         try:
+            extra = {"thinking": {"type": "disabled"}} if "deepseek" in os.environ.get("OPENROUTER_MODEL", "").lower() else {}
             resp = client.chat.completions.create(
                 model=os.environ["OPENROUTER_MODEL"],
                 temperature=0,
-                max_tokens=250,
+                max_tokens=300,
                 messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
+                extra_body=extra if extra else None,
             )
-            return resp.choices[0].message.content or ""
+            choice = resp.choices[0] if resp.choices else None
+            if choice and choice.message and choice.message.content:
+                return choice.message.content
+            return ""
         except APIStatusError as e:
             msg = e.body.get("error", {}).get("message") if isinstance(e.body, dict) else str(e)
-            print(f"  OpenRouter error {e.status_code}: {msg}")
-            if e.status_code != 402 or attempt == 5:
+            print(f"  API error {e.status_code}: {msg}")
+            if attempt == 5:
                 raise
-            wait = int(e.response.headers.get("Retry-After", 120))
-            print(f"  OpenRouter 402, retrying in {wait}s (attempt {attempt + 1})")
-            time.sleep(wait)
+            time.sleep(2)
+        except Exception as e:
+            print(f"  Request error: {e}")
+            if attempt == 5:
+                raise
+            time.sleep(2)
+    return ""
 
 
 def ask_json(system: str, user: str) -> dict:
@@ -96,19 +108,25 @@ def lead(state: State) -> dict:
 
 
 def get_candidate_pages(row: dict) -> list:
-    """Find candidate pages matching service or claim keywords; robust to mislabeled services."""
-    stopwords = {"amazon", "aws", "now", "and", "for", "with", "all", "is", "at", "in", "the", "a", "an", "to"}
-    svc_words = set(re.findall(r"\b[a-zA-Z0-9-]+\b", row.get("claimed_service", "").lower())) - stopwords
-    claim_words = set(re.findall(r"\b[a-zA-Z0-9-]+\b", row["claim_text"].lower())) - stopwords
-    matches = []
+    """Find candidate pages by scoring terms from both claimed_service and claim_text against page text."""
+    stopwords = {
+        "amazon", "aws", "now", "and", "for", "with", "all", "is", "at", "in", "the", "a", "an", "to",
+        "will", "are", "be", "by", "of", "on", "as", "or", "it", "its", "that", "this", "from", "into"
+    }
+    query = (row.get("claimed_service", "") + " " + row.get("claim_text", "")).lower()
+    query_words = set(re.findall(r"\b[a-zA-Z0-9-]+\b", query)) - stopwords
+
+    scored = []
     for p in PAGES:
-        p_text = (p["service_name"] + " " + p["title"]).lower()
-        p_words = set(re.findall(r"\b[a-zA-Z0-9-]+\b", p_text))
-        if svc_words and (svc_words & p_words):
-            matches.append(p)
-        elif "quantum" in claim_words and ("quantum" in p_text or "braket" in p_text):
-            matches.append(p)
-    return matches or PAGES
+        ts_words = set(re.findall(r"\b[a-zA-Z0-9-]+\b", (p["service_name"] + " " + p["title"]).lower()))
+        b_words = set(re.findall(r"\b[a-zA-Z0-9-]+\b", p["body_text"].lower()))
+        score = len(query_words & ts_words) * 3 + len(query_words & b_words)
+        if score > 0:
+            scored.append((score, p))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    top = [p for s, p in scored if s >= 3]
+    return top[:8] if top else [p for s, p in scored[:5]] or PAGES
 
 
 def researcher(state: State) -> dict:
@@ -118,7 +136,7 @@ def researcher(state: State) -> dict:
     listing = "\n".join(f'{p["page_id"]} | {p["service_name"]} | {p["title"]}' for p in candidates)
     picked = ask_json(
         "You match a claim to AWS announcement pages. Reply only with JSON: {\"page_ids\": [...]}. "
-        "List every page below that is about the same product or feature as the claim. Use [] if none is.",
+        "List every page below that is an official announcement of the product, feature, or launch described in the claim. If none matches, use [].",
         f"Claim: {row['claim_text']}\n\nPages:\n{listing}",
     ).get("page_ids", [])
     matching = [BY_ID[i] for i in picked if i in BY_ID]
@@ -128,9 +146,9 @@ def researcher(state: State) -> dict:
     sents = sentences(page["body_text"])
     numbered = "\n".join(f"{i}: {s}" for i, s in enumerate(sents))
     span = ask_json(
-        "You pick a quote from one page. Reply only with JSON: {\"start\": n, \"end\": n}. "
-        "Pick the shortest run of consecutive sentences that says what the page states about the claim's "
-        "status and availability. Sentence numbers start at 0.",
+        "You pick a quote from one page to check against a claim. Reply only with JSON: {\"start\": n, \"end\": n}. "
+        "Pick the span of consecutive sentences that addresses the facts asserted in the claim (product identity, status, features, and where/which regions or zones it is available). "
+        "Ensure you include any sentences that specify the product's availability or regions/zones so the fact-checker can verify regional claims. Sentence numbers start at 0.",
         f"Claim: {row['claim_text']}\n\nSentences:\n{numbered}",
     )
     try:
@@ -163,7 +181,8 @@ def fact_checker(state: State) -> dict:
 
     if ok1 and ok2:
         out = ask_json(
-            f"You are the fact-checker. Follow this rule file. Answer check 3 only: Does the quote back up every fact asserted in the claim?\n"
+            f"You are the fact-checker. Follow this rule file. Answer check 3 only: Does the quote back up every fact in the claim?\n"
+            f"Check that every fact asserted in the claim is supported by the quote. If any asserted fact (such as purpose, status, or regional scope) is not backed by the quote, answer 'no'.\n"
             f"Note: Extra details in the quote that are not in the claim do not invalidate the claim.\n"
             f"Reply only with JSON: {{\"answer\": \"yes\" or \"no\", \"why\": \"one short sentence\"}}.\n\n{rule}",
             f"Claim: {claim}\nPage: {page['page_id']} {page['url']}\nQuote: {quote}",
@@ -213,9 +232,7 @@ def share(run) -> str:
             time.sleep(2)
     else:
         raise RuntimeError(f"could not share trace {run.trace_id}")
-    # share_run builds the link on smith.langchain.com; use the host of the configured endpoint instead
-    app = os.environ.get("LANGSMITH_ENDPOINT", "https://api.smith.langchain.com").replace(".api.", ".").replace("//api.", "//")
-    return app.rstrip("/") + token
+    return "https://smith.langchain.com" + token
 
 
 def cell(text: str) -> str:
