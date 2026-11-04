@@ -317,9 +317,18 @@ def build_briefing_html(evaluated_items: list, confirmed: list, rejected: list) 
             """
         else:
             reason = item["reason"]
+            url = item.get("source_url", "")
+            quote = item.get("quote", "")
+            has_matching_page = url and "aws.amazon.com" in url and quote and quote != "no match"
+
+            evidence_rows = [f'<div class="reason-box"><strong>Rejection Reason:</strong> {reason}</div>']
+            if has_matching_page:
+                evidence_rows.append(f'<div class="evidence-row" style="margin-top: 0.75rem;"><strong>Examined Official Page:</strong> <a href="{url}" target="_blank" rel="noopener noreferrer">{url}</a></div>')
+                evidence_rows.append(f'<div class="quote-box" style="border-left-color: #ef4444; color: #7f1d1d; background: #fef2f2; padding: 0.5rem 0.75rem; border-radius: 4px; margin-top: 0.5rem;"><strong>Contradicting Quote from Page:</strong><blockquote>&ldquo;{quote}&rdquo;</blockquote></div>')
+
             detail_html = f"""
             <div class="evidence">
-              <div class="reason-box"><strong>Rejection Reason:</strong> {reason}</div>
+              {"".join(evidence_rows)}
             </div>
             """
 

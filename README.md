@@ -18,11 +18,11 @@ To prevent rumors and blog posts from ever reaching customers, the pipeline enfo
 
 ## Key Repository Artifacts
 
-- **[briefing.html](file:///Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/briefing.html)**: The live, standalone morning briefing page hosted on GitHub Pages displaying the 5 candidate claims with Confirmed/Rejected badges, evidence quotes, reasons, and LangSmith traces.
-- **[spotcheck.md](file:///Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/spotcheck.md)**: Human-audited fact-by-fact spot check verifying each Confirmed item against the refreshed AWS snapshot (`data/aws_official_source_snapshot_refresh.json`), citing the exact words backing each asserted fact.
-- **[final_run_output.txt](file:///Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/final_run_output.txt)**: Terminal log demonstrating the clean holdout run, showing that `tests/test_safety.py` passed before `briefing.html` was built.
-- **[checks.md](file:///Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/checks.md)**: Proof of safety gate functionality, showing both a passing run and a stopped run triggered by an intentional bad item.
-- **[tests/test_safety.py](file:///Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/tests/test_safety.py)**: Automated pytest checks guarding the split between confirmed and rejected items.
+- **[briefing.html](briefing.html)**: The live, standalone morning briefing page hosted on GitHub Pages displaying the 5 candidate claims with Confirmed/Rejected badges, evidence quotes, reasons, and LangSmith traces.
+- **[spotcheck.md](spotcheck.md)**: Human-audited fact-by-fact spot check verifying each Confirmed item against the refreshed AWS snapshot (`data/aws_official_source_snapshot_refresh.json`), citing the exact words backing each asserted fact.
+- **[final_run_output.txt](final_run_output.txt)**: Terminal log demonstrating the clean holdout run, showing that `tests/test_safety.py` passed before `briefing.html` was built.
+- **[checks.md](checks.md)**: Proof of safety gate functionality, showing both a passing run and a stopped run triggered by an intentional bad item.
+- **[tests/test_safety.py](tests/test_safety.py)**: Automated pytest checks guarding the split between confirmed and rejected items.
 
 ---
 
