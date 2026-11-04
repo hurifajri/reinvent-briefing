@@ -46,3 +46,4 @@ Environment variables needed in `.env`:
 - `LANGSMITH_TRACING=true`
 - `LANGSMITH_PROJECT=reinvent-briefing-audit`
 - `LANGSMITH_ENDPOINT=https://aws.api.smith.langchain.com`
+- `LANGSMITH_UI_URL=https://aws.smith.langchain.com`

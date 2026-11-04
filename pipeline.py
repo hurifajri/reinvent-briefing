@@ -240,9 +240,11 @@ def share(run) -> str:
                 time.sleep(2)
     else:
         raise RuntimeError(f"could not share trace {run.trace_id}")
-    endpoint = os.environ.get("LANGSMITH_ENDPOINT", "")
-    host = "https://aws.smith.langchain.com" if "aws" in endpoint else "https://smith.langchain.com"
-    return host + token
+    ui_url = os.environ.get("LANGSMITH_UI_URL")
+    if not ui_url:
+        endpoint = os.environ.get("LANGSMITH_ENDPOINT", "")
+        ui_url = "https://aws.smith.langchain.com" if "aws" in endpoint else "https://smith.langchain.com"
+    return ui_url.rstrip("/") + token
 
 
 def cell(text: str) -> str:
