@@ -228,13 +228,21 @@ def share(run) -> str:
     run.client.flush()
     for _ in range(15):
         try:
-            token = urlparse(run.client.share_run(run.trace_id)).path
+            shared_url = run.client.share_run(run.trace_id)
+            token = urlparse(shared_url).path
             break
         except Exception:
-            time.sleep(2)
+            try:
+                shared_url = run.client.read_run_shared_link(run.trace_id)
+                token = urlparse(shared_url).path
+                break
+            except Exception:
+                time.sleep(2)
     else:
         raise RuntimeError(f"could not share trace {run.trace_id}")
-    return "https://smith.langchain.com" + token
+    endpoint = os.environ.get("LANGSMITH_ENDPOINT", "")
+    host = "https://aws.smith.langchain.com" if "aws" in endpoint else "https://smith.langchain.com"
+    return host + token
 
 
 def cell(text: str) -> str:
