@@ -2,7 +2,7 @@
 
 Rules live in docs/confirm_rule.md. The fact-checker reads that file on every run.
 """
-import csv, json, os, re, sys, time
+import csv, json, os, re, subprocess, sys, time
 from typing import Optional, TypedDict
 from urllib.parse import urlparse
 
@@ -19,6 +19,7 @@ RULE_FILE = "docs/confirm_rule.md"
 SNAPSHOT = "data/aws_official_source_snapshot.json"
 CANDIDATES = "data/aws_reinvent_candidate_items.csv"
 RESULTS = "results.md"
+SPLIT_FILE = "data/split_results.json"
 
 base_url = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
 api_key = os.environ.get("OPENROUTER_API_KEY")
@@ -239,6 +240,76 @@ def cell(text: str) -> str:
     return text.replace("|", "\\|")
 
 
+def lead_split_results(evaluated_items: list) -> tuple[list, list]:
+    """Last lead step: gathers results into a confirmed list and a rejected list.
+    
+    Each item in both lists keeps its source URL, its quote or reason, and its trace link.
+    """
+    confirmed = []
+    rejected = []
+    for item in evaluated_items:
+        entry = {
+            "candidate_id": item["candidate_id"],
+            "claim": item["claim_text"],
+            "source_url": item["source_url"],
+            "url": item["source_url"],
+            "trace_link": item["trace_link"],
+            "trace": item["trace_link"],
+        }
+        if item.get("verdict") == "confirmed":
+            entry["quote"] = item["quote"]
+            confirmed.append(entry)
+        else:
+            entry["reason"] = item["reason"]
+            rejected.append(entry)
+    return confirmed, rejected
+
+
+def save_split_results(confirmed: list, rejected: list) -> None:
+    os.makedirs(os.path.dirname(SPLIT_FILE), exist_ok=True)
+    with open(SPLIT_FILE, "w", encoding="utf-8") as f:
+        json.dump({"confirmed": confirmed, "rejected": rejected}, f, indent=2)
+
+
+def run_safety_gate() -> None:
+    """Runs tests/test_safety.py via pytest before building anything.
+    
+    If the check fails, halts the pipeline run with a message.
+    """
+    print("\nRunning safety gate (tests/test_safety.py)...")
+    proc = subprocess.run(
+        [sys.executable, "-m", "pytest", "tests/test_safety.py", "-v"],
+        capture_output=True,
+        text=True,
+    )
+    if proc.returncode != 0:
+        print(proc.stdout)
+        if proc.stderr:
+            print(proc.stderr)
+        print("\n[SAFETY GATE HALTED] tests/test_safety.py check failed!")
+        print("Pipeline stopped before building results.")
+        sys.exit(1)
+    print(proc.stdout.strip())
+    print("\n[SAFETY GATE PASSED] All safety checks passed successfully.")
+
+
+def print_split_lists(confirmed: list, rejected: list) -> None:
+    print("\n================== CONFIRMED LIST ==================")
+    for c in confirmed:
+        print(f"[{c['candidate_id']}] {c['claim']}")
+        print(f"  Source URL: {c['source_url']}")
+        print(f"  Quote:      {c['quote']}")
+        print(f"  Trace Link: {c['trace_link']}")
+        print()
+    print("================== REJECTED LIST ==================")
+    for r in rejected:
+        print(f"[{r['candidate_id']}] {r['claim']}")
+        print(f"  Source URL: {r['source_url']}")
+        print(f"  Reason:     {r['reason']}")
+        print(f"  Trace Link: {r['trace_link']}")
+        print()
+
+
 def main(ids: list) -> None:
     rows = [r for r in csv.DictReader(open(CANDIDATES, encoding="utf-8")) if not ids or r["candidate_id"] in ids]
     lines = [
@@ -247,20 +318,42 @@ def main(ids: list) -> None:
         "| Candidate | Claim | Page | Quote | Check 1 | Check 2 | Check 3 | Verdict | Reason | Trace |",
         "|---|---|---|---|---|---|---|---|---|---|",
     ]
+    evaluated_items = []
     for row in rows:
         print(f"== {row['candidate_id']} ==")
         f = run_candidate(row)
         url = share(RUNS[row["candidate_id"]])
         page = f["page"]["page_id"] if f.get("page") else "no match"
+        source_url = f["page"]["url"] if f.get("page") else row.get("origin_source_url", "no match")
+        evaluated_items.append({
+            "candidate_id": row["candidate_id"],
+            "claim_text": row["claim_text"],
+            "source_url": source_url,
+            "quote": f.get("quote", "no match"),
+            "verdict": f.get("verdict", "rejected"),
+            "reason": f.get("reason", ""),
+            "trace_link": url,
+        })
         lines.append("| " + " | ".join(cell(x) for x in [
             row["candidate_id"], row["claim_text"], page, f["quote"] or "no match",
             *f["answers"], f["verdict"], f["reason"], f"[trace]({url})",
         ]) + " |")
         print(f"  -> {f['verdict']}: {f['reason']}")
         time.sleep(2)
+
+    # Lead step: split results into confirmed and rejected lists
+    confirmed, rejected = lead_split_results(evaluated_items)
+    save_split_results(confirmed, rejected)
+
+    # Safety gate: runs tests/test_safety.py and stops before building anything if it fails
+    run_safety_gate()
+
     if not ids:
         open(RESULTS, "w", encoding="utf-8").write("\n".join(lines) + "\n")
         print(f"wrote {RESULTS}")
+
+    # Print confirmed and rejected lists at the end
+    print_split_lists(confirmed, rejected)
 
 
 if __name__ == "__main__":

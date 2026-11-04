@@ -1,0 +1,51 @@
+{
+  "confirmed": [
+    {
+      "candidate_id": "C-01",
+      "claim": "Amazon Bedrock AgentCore is now generally available for building and running AI agents at scale.",
+      "source_url": "https://aws.amazon.com/about-aws/whats-new/2025/10/amazon-bedrock-agentcore-available/",
+      "url": "https://aws.amazon.com/about-aws/whats-new/2025/10/amazon-bedrock-agentcore-available/",
+      "trace_link": "https://smith.langchain.com/public/49ef9509-6372-4676-bc77-a360306446f3/r",
+      "trace": "https://smith.langchain.com/public/49ef9509-6372-4676-bc77-a360306446f3/r",
+      "quote": "Amazon Bedrock AgentCore is now generally available. AgentCore is an agentic platform to build, deploy and operate AI agents securely at scale, using any framework and any foundation model. AgentCore adds support for VPC, AWS PrivateLink and AWS CloudFormation. Amazon Bedrock AgentCore is available in nine AWS Regions: US East (N. Virginia), US East (Ohio), US West (Oregon), Asia Pacific (Mumbai), Asia Pacific (Singapore), Asia Pacific (Sydney), Asia Pacific (Tokyo), Europe (Frankfurt) and Europe (Ireland)."
+    },
+    {
+      "candidate_id": "C-04",
+      "claim": "Amazon Aurora DSQL is now generally available as a serverless distributed SQL database with active-active high availability.",
+      "source_url": "https://aws.amazon.com/about-aws/whats-new/2025/05/amazon-aurora-dsql-generally-available/",
+      "url": "https://aws.amazon.com/about-aws/whats-new/2025/05/amazon-aurora-dsql-generally-available/",
+      "trace_link": "https://smith.langchain.com/public/cb2997af-1284-498a-a9f4-a863d538fcc8/r",
+      "trace": "https://smith.langchain.com/public/cb2997af-1284-498a-a9f4-a863d538fcc8/r",
+      "quote": "Amazon Aurora DSQL is now generally available. Aurora DSQL is a serverless, distributed SQL database with virtually unlimited scale, active-active high availability, PostgreSQL compatibility and no infrastructure to manage."
+    }
+  ],
+  "rejected": [
+    {
+      "candidate_id": "C-02",
+      "claim": "AWS will launch a managed quantum computing Region in us-east-1 at re:Invent 2025.",
+      "source_url": "https://news.ycombinator.com/",
+      "url": "https://news.ycombinator.com/",
+      "trace_link": "https://smith.langchain.com/public/3cfecdff-204c-4743-8f77-c7ac1f1d93cb/r",
+      "trace": "https://smith.langchain.com/public/3cfecdff-204c-4743-8f77-c7ac1f1d93cb/r",
+      "reason": "Check 1 failed: the snapshot has no page for this claim."
+    },
+    {
+      "candidate_id": "C-03",
+      "claim": "Amazon EC2 P6e-GB200 UltraServers accelerated by NVIDIA Grace Blackwell are now available in all commercial AWS Regions.",
+      "source_url": "https://aws.amazon.com/about-aws/whats-new/2025/07/amazon-ec2-p6e-gb200-ultraservers-available/",
+      "url": "https://aws.amazon.com/about-aws/whats-new/2025/07/amazon-ec2-p6e-gb200-ultraservers-available/",
+      "trace_link": "https://smith.langchain.com/public/83cf6175-30d6-4c0e-830b-7964d2370174/r",
+      "trace": "https://smith.langchain.com/public/83cf6175-30d6-4c0e-830b-7964d2370174/r",
+      "reason": "Check 3 failed: The quote says availability only in the Dallas Local Zone, not all commercial AWS Regions."
+    },
+    {
+      "candidate_id": "C-05",
+      "claim": "Amazon S3 Vectors is now GA and lets you store and query vector embeddings natively in S3 at massive scale.",
+      "source_url": "https://aws.amazon.com/about-aws/whats-new/2025/07/amazon-s3-vectors-preview-native-support-storing-querying-vectors/",
+      "url": "https://aws.amazon.com/about-aws/whats-new/2025/07/amazon-s3-vectors-preview-native-support-storing-querying-vectors/",
+      "trace_link": "https://smith.langchain.com/public/89329ad7-b9e7-4ab3-8e80-c508709b8c58/r",
+      "trace": "https://smith.langchain.com/public/89329ad7-b9e7-4ab3-8e80-c508709b8c58/r",
+      "reason": "Check 3 failed: The quote says 'preview', not GA, so the claim's status is not backed."
+    }
+  ]
+}
