@@ -44,6 +44,6 @@ Environment variables needed in `.env`:
 - `OPENROUTER_MODEL`
 - `LANGSMITH_API_KEY`
 - `LANGSMITH_TRACING=true`
-- `LANGSMITH_PROJECT=reinvent-briefing-audit`
+- `LANGSMITH_PROJECT=reinvent-briefing-holdout`
 - `LANGSMITH_ENDPOINT=https://aws.api.smith.langchain.com`
 - `LANGSMITH_UI_URL=https://aws.smith.langchain.com`
