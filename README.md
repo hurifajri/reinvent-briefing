@@ -1,18 +1,48 @@
-# re:Invent claim check
-- Model: anthropic/claude-sonnet-4.5
-- Answer: NOT REAL
-- Trace: https://aws.smith.langchain.com/public/da5022b6-34c2-44ca-af59-e84c7832d22f/r/3a7f3b6c-c79b-43f9-ae3c-611dc87ef2b9?start_time=2026-10-19T09%3A38%3A27.356233Z
-- Source check: the model found no official AWS page proving the claim ("There is no official AWS announcement page for this claim because it doesn't exist as a real launch"). It only pointed to the Amazon Braket page (aws.amazon.com/braket/) as AWS's actual quantum offering, and said a Hacker News third-party source is a strong sign the claim is speculative.
+# AWS re:Invent 2025 Morning Briefing
 
-## Pipeline
+Live Briefing Page: **[https://hurifajri.github.io/reinvent-briefing/briefing.html](https://hurifajri.github.io/reinvent-briefing/briefing.html)** (also accessible at [https://hurifajri.github.io/reinvent-briefing/](https://hurifajri.github.io/reinvent-briefing/))
 
-`pipeline.py` is a LangGraph graph with three nodes: `lead`, `researcher`, `fact-checker`.
-The fact-checker reads its rules from `docs/confirm_rule.md` on every run.
+---
 
-```
+## Overview
+
+This repository powers an automated, verified morning briefing for AWS Solutions Architects. Before architects share announcements with customers, every candidate claim must prove itself against official AWS documentation.
+
+To prevent rumors and blog posts from ever reaching customers, the pipeline enforces strict safety gates and verification checks before publishing:
+1. **Source Verification:** Every confirmed claim must originate strictly from an official `aws.amazon.com` domain.
+2. **Verbatim Evidence:** Every confirmed claim must be supported word-for-word by an exact quote from the official AWS documentation snapshot.
+3. **Automated Safety Gate (`pytest`):** Automatic tests in `tests/test_safety.py` validate the partition integrity before the briefing page is built. If any check fails, the pipeline halts immediately without publishing.
+4. **Public Traces:** Every evaluation run retains a public, permanent LangSmith trace link that can be audited by anyone without authentication.
+
+---
+
+## Key Repository Artifacts
+
+- **[briefing.html](file:///Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/briefing.html)**: The live, standalone morning briefing page hosted on GitHub Pages displaying the 5 candidate claims with Confirmed/Rejected badges, evidence quotes, reasons, and LangSmith traces.
+- **[spotcheck.md](file:///Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/spotcheck.md)**: Human-audited fact-by-fact spot check verifying each Confirmed item against the refreshed AWS snapshot (`data/aws_official_source_snapshot_refresh.json`), citing the exact words backing each asserted fact.
+- **[final_run_output.txt](file:///Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/final_run_output.txt)**: Terminal log demonstrating the clean holdout run, showing that `tests/test_safety.py` passed before `briefing.html` was built.
+- **[checks.md](file:///Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/checks.md)**: Proof of safety gate functionality, showing both a passing run and a stopped run triggered by an intentional bad item.
+- **[tests/test_safety.py](file:///Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/tests/test_safety.py)**: Automated pytest checks guarding the split between confirmed and rejected items.
+
+---
+
+## Pipeline Execution
+
+```bash
+# Setup
 pip install -r requirements.txt
-python pipeline.py        # runs all five candidates, writes results.md, one public LangSmith trace per candidate
-python verify_results.py  # checks quotes, blanks, verdicts and trace links in results.md
+
+# Run the pipeline (evaluates holdout batch, runs safety gate, builds briefing.html)
+python pipeline.py
+
+# Run safety checks independently
+pytest tests/test_safety.py -v
 ```
 
-Needs `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` and the `LANGSMITH_*` variables in `.env`.
+Environment variables needed in `.env`:
+- `OPENROUTER_API_KEY`
+- `OPENROUTER_MODEL`
+- `LANGSMITH_API_KEY`
+- `LANGSMITH_TRACING=true`
+- `LANGSMITH_PROJECT=reinvent-briefing-audit`
+- `LANGSMITH_ENDPOINT=https://aws.api.smith.langchain.com`

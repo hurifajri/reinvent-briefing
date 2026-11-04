@@ -16,9 +16,10 @@ from langsmith.wrappers import wrap_openai
 from openai import APIStatusError, OpenAI
 
 RULE_FILE = "docs/confirm_rule.md"
-SNAPSHOT = "data/aws_official_source_snapshot.json"
-CANDIDATES = "data/aws_reinvent_candidate_items.csv"
+SNAPSHOT = os.environ.get("SNAPSHOT_FILE", "data/aws_official_source_snapshot_refresh.json" if os.path.exists("data/aws_official_source_snapshot_refresh.json") else "data/aws_official_source_snapshot.json")
+CANDIDATES = os.environ.get("CANDIDATES_FILE", "data/aws_reinvent_candidate_items_holdout.csv" if os.path.exists("data/aws_reinvent_candidate_items_holdout.csv") else "data/aws_reinvent_candidate_items.csv")
 RESULTS = "results.md"
+BRIEFING_HTML = "briefing.html"
 SPLIT_FILE = "data/split_results.json"
 
 base_url = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
@@ -293,6 +294,233 @@ def run_safety_gate() -> None:
     print("\n[SAFETY GATE PASSED] All safety checks passed successfully.")
 
 
+def build_briefing_html(evaluated_items: list, confirmed: list, rejected: list) -> None:
+    """Builds the live morning briefing HTML page for solutions architects."""
+    html_items = []
+    for item in evaluated_items:
+        cid = item["candidate_id"]
+        claim = item["claim_text"]
+        verdict = item["verdict"]
+        trace = item["trace_link"]
+        is_confirmed = verdict == "confirmed"
+        badge_class = "badge-confirmed" if is_confirmed else "badge-rejected"
+        badge_text = "Confirmed" if is_confirmed else "Rejected"
+
+        if is_confirmed:
+            url = item["source_url"]
+            quote = item["quote"]
+            detail_html = f"""
+            <div class="evidence">
+              <div class="evidence-row"><strong>Official Source:</strong> <a href="{url}" target="_blank" rel="noopener noreferrer">{url}</a></div>
+              <div class="quote-box"><blockquote>&ldquo;{quote}&rdquo;</blockquote></div>
+            </div>
+            """
+        else:
+            reason = item["reason"]
+            detail_html = f"""
+            <div class="evidence">
+              <div class="reason-box"><strong>Rejection Reason:</strong> {reason}</div>
+            </div>
+            """
+
+        item_card = f"""
+        <article class="claim-card {badge_class}">
+          <div class="card-header">
+            <span class="claim-id">{cid}</span>
+            <span class="badge {badge_class}">{badge_text}</span>
+          </div>
+          <p class="claim-text">{claim}</p>
+          {detail_html}
+          <div class="card-footer">
+            <a href="{trace}" target="_blank" rel="noopener noreferrer" class="trace-link">View Public LangSmith Trace &rarr;</a>
+          </div>
+        </article>
+        """
+        html_items.append(item_card)
+
+    items_rendered = "\n".join(html_items)
+    full_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS re:Invent 2025 Morning Briefing</title>
+  <style>
+    :root {{
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --border: #e2e8f0;
+      --confirmed-bg: #ecfdf5;
+      --confirmed-border: #a7f3d0;
+      --confirmed-text: #065f46;
+      --rejected-bg: #fef2f2;
+      --rejected-border: #fecaca;
+      --rejected-text: #991b1b;
+      --link: #2563eb;
+    }}
+    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2.5rem 1rem;
+    }}
+    .container {{
+      max-width: 900px;
+      margin: 0 auto;
+    }}
+    header {{
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }}
+    h1 {{
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.5rem;
+    }}
+    .subtitle {{
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 1.25rem;
+    }}
+    .meta-bar {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      background: #f1f5f9;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+    }}
+    .claim-card {{
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }}
+    .claim-card.badge-confirmed {{
+      border-left: 5px solid #10b981;
+    }}
+    .claim-card.badge-rejected {{
+      border-left: 5px solid #ef4444;
+    }}
+    .card-header {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }}
+    .claim-id {{
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }}
+    .badge {{
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }}
+    .badge-confirmed {{
+      background: var(--confirmed-bg);
+      color: var(--confirmed-text);
+      border: 1px solid var(--confirmed-border);
+    }}
+    .badge-rejected {{
+      background: var(--rejected-bg);
+      color: var(--rejected-text);
+      border: 1px solid var(--rejected-border);
+    }}
+    .claim-text {{
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 1rem;
+    }}
+    .evidence {{
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }}
+    .evidence-row {{
+      margin-bottom: 0.5rem;
+      word-break: break-all;
+    }}
+    .evidence-row a {{
+      color: var(--link);
+      text-decoration: none;
+    }}
+    .evidence-row a:hover {{
+      text-decoration: underline;
+    }}
+    .quote-box {{
+      margin-top: 0.5rem;
+      border-left: 3px solid #0ea5e9;
+      padding-left: 0.75rem;
+      color: #334155;
+      font-style: italic;
+    }}
+    .reason-box {{
+      color: #991b1b;
+    }}
+    .card-footer {{
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 0.75rem;
+      border-top: 1px solid #f1f5f9;
+    }}
+    .trace-link {{
+      color: var(--link);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+    }}
+    .trace-link:hover {{
+      text-decoration: underline;
+    }}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AWS re:Invent 2025 Morning Briefing</h1>
+      <p class="subtitle">Verified Launch Intelligence for Solutions Architects &mdash; Solutions architects will only repeat an item if it proves itself on this page.</p>
+      <div class="meta-bar">
+        <span><strong>Batch:</strong> 3 November 2025 Holdout</span>
+        <span><strong>Status:</strong> {len(confirmed)} Confirmed &bull; {len(rejected)} Rejected</span>
+        <span><strong>Safety Gate:</strong> Passed (tests/test_safety.py)</span>
+      </div>
+    </header>
+    <main>
+      {items_rendered}
+    </main>
+  </div>
+</body>
+</html>
+"""
+    with open(BRIEFING_HTML, "w", encoding="utf-8") as f:
+        f.write(full_html)
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(full_html)
+    print(f"built {BRIEFING_HTML}")
+
+
 def print_split_lists(confirmed: list, rejected: list) -> None:
     print("\n================== CONFIRMED LIST ==================")
     for c in confirmed:
@@ -347,6 +575,9 @@ def main(ids: list) -> None:
 
     # Safety gate: runs tests/test_safety.py and stops before building anything if it fails
     run_safety_gate()
+
+    # Build briefing.html
+    build_briefing_html(evaluated_items, confirmed, rejected)
 
     if not ids:
         open(RESULTS, "w", encoding="utf-8").write("\n".join(lines) + "\n")

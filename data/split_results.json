@@ -1,51 +1,51 @@
 {
   "confirmed": [
     {
-      "candidate_id": "C-01",
-      "claim": "Amazon Bedrock AgentCore is now generally available for building and running AI agents at scale.",
-      "source_url": "https://aws.amazon.com/about-aws/whats-new/2025/10/amazon-bedrock-agentcore-available/",
-      "url": "https://aws.amazon.com/about-aws/whats-new/2025/10/amazon-bedrock-agentcore-available/",
-      "trace_link": "https://smith.langchain.com/public/49ef9509-6372-4676-bc77-a360306446f3/r",
-      "trace": "https://smith.langchain.com/public/49ef9509-6372-4676-bc77-a360306446f3/r",
-      "quote": "Amazon Bedrock AgentCore is now generally available. AgentCore is an agentic platform to build, deploy and operate AI agents securely at scale, using any framework and any foundation model. AgentCore adds support for VPC, AWS PrivateLink and AWS CloudFormation. Amazon Bedrock AgentCore is available in nine AWS Regions: US East (N. Virginia), US East (Ohio), US West (Oregon), Asia Pacific (Mumbai), Asia Pacific (Singapore), Asia Pacific (Sydney), Asia Pacific (Tokyo), Europe (Frankfurt) and Europe (Ireland)."
+      "candidate_id": "RIV-HO-01",
+      "claim": "Amazon Quick Suite is now generally available, giving business users one agentic workspace for research, business intelligence and workflow automation.",
+      "source_url": "https://aws.amazon.com/quicksuite/",
+      "url": "https://aws.amazon.com/quicksuite/",
+      "trace_link": "https://smith.langchain.com/public/5e625d7c-bcf7-4855-bd66-d5d0b43c4f0a/r",
+      "trace": "https://smith.langchain.com/public/5e625d7c-bcf7-4855-bd66-d5d0b43c4f0a/r",
+      "quote": "Amazon Quick Suite is now generally available, giving business users one agentic workspace for research, business intelligence and workflow automation. Quick Suite is an agentic teammate that answers questions at work and turns the answers into actions, without switching between tools.\n\nQuick Suite includes Quick Research for in-depth research across company data and trusted outside sources, Quick Sight for business intelligence dashboards and plain-language questions, Quick Flows for automating everyday tasks, and Quick Automate for multi-step business processes. Quick Index connects your documents and data so Quick Suite can find answers in them."
     },
     {
-      "candidate_id": "C-04",
-      "claim": "Amazon Aurora DSQL is now generally available as a serverless distributed SQL database with active-active high availability.",
-      "source_url": "https://aws.amazon.com/about-aws/whats-new/2025/05/amazon-aurora-dsql-generally-available/",
-      "url": "https://aws.amazon.com/about-aws/whats-new/2025/05/amazon-aurora-dsql-generally-available/",
-      "trace_link": "https://smith.langchain.com/public/cb2997af-1284-498a-a9f4-a863d538fcc8/r",
-      "trace": "https://smith.langchain.com/public/cb2997af-1284-498a-a9f4-a863d538fcc8/r",
-      "quote": "Amazon Aurora DSQL is now generally available. Aurora DSQL is a serverless, distributed SQL database with virtually unlimited scale, active-active high availability, PostgreSQL compatibility and no infrastructure to manage."
+      "candidate_id": "RIV-HO-02",
+      "claim": "Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock, supporting long-running agent tasks and complex coding workloads for enterprise builders.",
+      "source_url": "https://aws.amazon.com/bedrock/anthropic/",
+      "url": "https://aws.amazon.com/bedrock/anthropic/",
+      "trace_link": "https://smith.langchain.com/public/4785e0e8-8e1d-4e2a-9b9d-801e75b65717/r",
+      "trace": "https://smith.langchain.com/public/4785e0e8-8e1d-4e2a-9b9d-801e75b65717/r",
+      "quote": "Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock, with support for long-running agent tasks and complex coding workloads for enterprise builders. Claude Sonnet 4.5 can keep working through multi-step tasks and large codebases, which suits teams automating software development and business workflows.\n\nYou can call Claude Sonnet 4.5 through the Amazon Bedrock API, and build and run agents with it using Amazon Bedrock AgentCore."
+    },
+    {
+      "candidate_id": "RIV-HO-03",
+      "claim": "Starting 15 July 2025 new AWS customers receive $100 in AWS Free Tier credits at sign-up and can earn up to $100 more by exploring key services.",
+      "source_url": "https://aws.amazon.com/free/",
+      "url": "https://aws.amazon.com/free/",
+      "trace_link": "https://smith.langchain.com/public/0220c274-8993-4f37-8777-d244dd107087/r",
+      "trace": "https://smith.langchain.com/public/0220c274-8993-4f37-8777-d244dd107087/r",
+      "quote": "Starting July 15, 2025, new AWS customers receive $100 in AWS Free Tier credits at sign-up and can earn up to $100 more by exploring key AWS services. Customers earn the extra credits by completing activities with services such as Amazon EC2, Amazon RDS, AWS Lambda, Amazon Bedrock and AWS Budgets."
     }
   ],
   "rejected": [
     {
-      "candidate_id": "C-02",
-      "claim": "AWS will launch a managed quantum computing Region in us-east-1 at re:Invent 2025.",
-      "source_url": "https://news.ycombinator.com/",
-      "url": "https://news.ycombinator.com/",
-      "trace_link": "https://smith.langchain.com/public/3cfecdff-204c-4743-8f77-c7ac1f1d93cb/r",
-      "trace": "https://smith.langchain.com/public/3cfecdff-204c-4743-8f77-c7ac1f1d93cb/r",
+      "candidate_id": "RIV-HO-04",
+      "claim": "Amazon S3 Vectors is now generally available in all commercial AWS Regions, offering native vector storage and similarity query support for AI workloads.",
+      "source_url": "https://aws.amazon.com/s3/features/vectors/",
+      "url": "https://aws.amazon.com/s3/features/vectors/",
+      "trace_link": "https://smith.langchain.com/public/8093b4a0-47ca-4d52-8b1f-5e1239bc31ad/r",
+      "trace": "https://smith.langchain.com/public/8093b4a0-47ca-4d52-8b1f-5e1239bc31ad/r",
+      "reason": "Check 3 failed: The quote says S3 Vectors is available in preview in only five Regions, not generally available in all commercial AWS Regions."
+    },
+    {
+      "candidate_id": "RIV-HO-05",
+      "claim": "AWS Lambda is raising the maximum function timeout from 15 minutes to 60 minutes for all runtimes, rolling out to every Region before re:Invent 2025.",
+      "source_url": "https://www.reddit.com/r/aws/",
+      "url": "https://www.reddit.com/r/aws/",
+      "trace_link": "https://smith.langchain.com/public/7d2e74fb-3c56-4467-9164-e286a160f02f/r",
+      "trace": "https://smith.langchain.com/public/7d2e74fb-3c56-4467-9164-e286a160f02f/r",
       "reason": "Check 1 failed: the snapshot has no page for this claim."
-    },
-    {
-      "candidate_id": "C-03",
-      "claim": "Amazon EC2 P6e-GB200 UltraServers accelerated by NVIDIA Grace Blackwell are now available in all commercial AWS Regions.",
-      "source_url": "https://aws.amazon.com/about-aws/whats-new/2025/07/amazon-ec2-p6e-gb200-ultraservers-available/",
-      "url": "https://aws.amazon.com/about-aws/whats-new/2025/07/amazon-ec2-p6e-gb200-ultraservers-available/",
-      "trace_link": "https://smith.langchain.com/public/83cf6175-30d6-4c0e-830b-7964d2370174/r",
-      "trace": "https://smith.langchain.com/public/83cf6175-30d6-4c0e-830b-7964d2370174/r",
-      "reason": "Check 3 failed: The quote says availability only in the Dallas Local Zone, not all commercial AWS Regions."
-    },
-    {
-      "candidate_id": "C-05",
-      "claim": "Amazon S3 Vectors is now GA and lets you store and query vector embeddings natively in S3 at massive scale.",
-      "source_url": "https://aws.amazon.com/about-aws/whats-new/2025/07/amazon-s3-vectors-preview-native-support-storing-querying-vectors/",
-      "url": "https://aws.amazon.com/about-aws/whats-new/2025/07/amazon-s3-vectors-preview-native-support-storing-querying-vectors/",
-      "trace_link": "https://smith.langchain.com/public/89329ad7-b9e7-4ab3-8e80-c508709b8c58/r",
-      "trace": "https://smith.langchain.com/public/89329ad7-b9e7-4ab3-8e80-c508709b8c58/r",
-      "reason": "Check 3 failed: The quote says 'preview', not GA, so the claim's status is not backed."
     }
   ]
 }

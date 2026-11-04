@@ -1,0 +1,82 @@
+/Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/.venv/lib/python3.9/site-packages/langgraph/cache/base/__init__.py:8: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+  from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+== RIV-HO-01 ==
+  lead
+  researcher
+  fact-checker
+  lead (final verdict)
+  -> confirmed: All three checks are yes.
+== RIV-HO-02 ==
+  lead
+  researcher
+  fact-checker
+  lead (final verdict)
+  -> confirmed: All three checks are yes.
+== RIV-HO-03 ==
+  lead
+  researcher
+  fact-checker
+  lead (final verdict)
+  -> confirmed: All three checks are yes.
+== RIV-HO-04 ==
+  lead
+  researcher
+  fact-checker
+  lead (final verdict)
+  -> rejected: Check 3 failed: The quote says S3 Vectors is available in preview in only five Regions, not generally available in all commercial AWS Regions.
+== RIV-HO-05 ==
+  lead
+  researcher
+  lead (final verdict)
+  -> rejected: Check 1 failed: the snapshot has no page for this claim.
+
+Running safety gate (tests/test_safety.py)...
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing
+plugins: anyio-4.12.1, langsmith-0.4.37
+collecting ... collected 2 items
+
+tests/test_safety.py::test_confirmed_items_have_aws_url_and_quote PASSED [ 50%]
+tests/test_safety.py::test_rejected_items_have_reason PASSED             [100%]
+
+============================== 2 passed in 0.03s ===============================
+
+[SAFETY GATE PASSED] All safety checks passed successfully.
+built briefing.html
+wrote results.md
+
+================== CONFIRMED LIST ==================
+[RIV-HO-01] Amazon Quick Suite is now generally available, giving business users one agentic workspace for research, business intelligence and workflow automation.
+  Source URL: https://aws.amazon.com/quicksuite/
+  Quote:      Amazon Quick Suite is now generally available, giving business users one agentic workspace for research, business intelligence and workflow automation. Quick Suite is an agentic teammate that answers questions at work and turns the answers into actions, without switching between tools.
+
+Quick Suite includes Quick Research for in-depth research across company data and trusted outside sources, Quick Sight for business intelligence dashboards and plain-language questions, Quick Flows for automating everyday tasks, and Quick Automate for multi-step business processes. Quick Index connects your documents and data so Quick Suite can find answers in them.
+  Trace Link: https://smith.langchain.com/public/5e625d7c-bcf7-4855-bd66-d5d0b43c4f0a/r
+
+[RIV-HO-02] Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock, supporting long-running agent tasks and complex coding workloads for enterprise builders.
+  Source URL: https://aws.amazon.com/bedrock/anthropic/
+  Quote:      Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock, with support for long-running agent tasks and complex coding workloads for enterprise builders. Claude Sonnet 4.5 can keep working through multi-step tasks and large codebases, which suits teams automating software development and business workflows.
+
+You can call Claude Sonnet 4.5 through the Amazon Bedrock API, and build and run agents with it using Amazon Bedrock AgentCore.
+  Trace Link: https://smith.langchain.com/public/4785e0e8-8e1d-4e2a-9b9d-801e75b65717/r
+
+[RIV-HO-03] Starting 15 July 2025 new AWS customers receive $100 in AWS Free Tier credits at sign-up and can earn up to $100 more by exploring key services.
+  Source URL: https://aws.amazon.com/free/
+  Quote:      Starting July 15, 2025, new AWS customers receive $100 in AWS Free Tier credits at sign-up and can earn up to $100 more by exploring key AWS services. Customers earn the extra credits by completing activities with services such as Amazon EC2, Amazon RDS, AWS Lambda, Amazon Bedrock and AWS Budgets.
+  Trace Link: https://smith.langchain.com/public/0220c274-8993-4f37-8777-d244dd107087/r
+
+================== REJECTED LIST ==================
+[RIV-HO-04] Amazon S3 Vectors is now generally available in all commercial AWS Regions, offering native vector storage and similarity query support for AI workloads.
+  Source URL: https://aws.amazon.com/s3/features/vectors/
+  Reason:     Check 3 failed: The quote says S3 Vectors is available in preview in only five Regions, not generally available in all commercial AWS Regions.
+  Trace Link: https://smith.langchain.com/public/8093b4a0-47ca-4d52-8b1f-5e1239bc31ad/r
+
+[RIV-HO-05] AWS Lambda is raising the maximum function timeout from 15 minutes to 60 minutes for all runtimes, rolling out to every Region before re:Invent 2025.
+  Source URL: https://www.reddit.com/r/aws/
+  Reason:     Check 1 failed: the snapshot has no page for this claim.
+  Trace Link: https://smith.langchain.com/public/7d2e74fb-3c56-4467-9164-e286a160f02f/r
+

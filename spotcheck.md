@@ -1,0 +1,27 @@
+# Spot Check: Confirmed Claims Verification
+
+This document provides human audit verification for each Confirmed claim from the 3 November 2025 holdout batch (`data/aws_reinvent_candidate_items_holdout.csv`), checked against the official AWS page copies in `data/aws_official_source_snapshot_refresh.json`.
+
+For each confirmed item, every individual fact asserted by the claim is audited against the exact words in the official source quote.
+
+---
+
+## Confirmed Items Audit Table
+
+| Candidate ID | Claim Text | AWS Source Page | Confirmed Quote in Snapshot | Asserted Facts & Exact Backing Words | Spot Check Result |
+|---|---|---|---|---|---|
+| **RIV-HO-01** | Amazon Quick Suite is now generally available, giving business users one agentic workspace for research, business intelligence and workflow automation. | `AWSPG-R07`<br>https://aws.amazon.com/quicksuite/ | `"Amazon Quick Suite is now generally available, giving business users one agentic workspace for research, business intelligence and workflow automation. Quick Suite is an agentic teammate that answers questions at work and turns the answers into actions, without switching between tools.`<br><br>`Quick Suite includes Quick Research for in-depth research across company data and trusted outside sources, Quick Sight for business intelligence dashboards and plain-language questions, Quick Flows for automating everyday tasks, and Quick Automate for multi-step business processes. Quick Index connects your documents and data so Quick Suite can find answers in them."` | 1. **Product Name & Status**: "Amazon Quick Suite is now generally available"<br>&rarr; Backed by exact words: `"Amazon Quick Suite is now generally available"`<br>2. **Target Users & Workspace**: "giving business users one agentic workspace"<br>&rarr; Backed by exact words: `"giving business users one agentic workspace"`<br>3. **Capabilities**: "for research, business intelligence and workflow automation"<br>&rarr; Backed by exact words: `"for research, business intelligence and workflow automation"` | **PASSED** (All 3 facts backed word-for-word) |
+| **RIV-HO-02** | Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock, supporting long-running agent tasks and complex coding workloads for enterprise builders. | `AWSPG-R08`<br>https://aws.amazon.com/bedrock/anthropic/ | `"Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock, with support for long-running agent tasks and complex coding workloads for enterprise builders. Claude Sonnet 4.5 can keep working through multi-step tasks and large codebases, which suits teams automating software development and business workflows.`<br><br>`You can call Claude Sonnet 4.5 through the Amazon Bedrock API, and build and run agents with it using Amazon Bedrock AgentCore."` | 1. **Model & Platform Availability**: "Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock"<br>&rarr; Backed by exact words: `"Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock"`<br>2. **Agent Capability**: "supporting long-running agent tasks"<br>&rarr; Backed by exact words: `"with support for long-running agent tasks"`<br>3. **Workload Scope**: "complex coding workloads for enterprise builders"<br>&rarr; Backed by exact words: `"and complex coding workloads for enterprise builders"` | **PASSED** (All 3 facts backed word-for-word) |
+| **RIV-HO-03** | Starting 15 July 2025 new AWS customers receive $100 in AWS Free Tier credits at sign-up and can earn up to $100 more by exploring key services. | `AWSPG-R09`<br>https://aws.amazon.com/free/ | `"Starting July 15, 2025, new AWS customers receive $100 in AWS Free Tier credits at sign-up and can earn up to $100 more by exploring key AWS services. Customers earn the extra credits by completing activities with services such as Amazon EC2, Amazon RDS, AWS Lambda, Amazon Bedrock and AWS Budgets."` | 1. **Effective Date & Audience**: "Starting 15 July 2025 new AWS customers"<br>&rarr; Backed by exact words: `"Starting July 15, 2025, new AWS customers"`<br>2. **Sign-up Credit**: "receive $100 in AWS Free Tier credits at sign-up"<br>&rarr; Backed by exact words: `"receive $100 in AWS Free Tier credits at sign-up"`<br>3. **Additional Exploration Credits**: "and can earn up to $100 more by exploring key services"<br>&rarr; Backed by exact words: `"and can earn up to $100 more by exploring key AWS services"` | **PASSED** (All 3 facts backed word-for-word) |
+
+---
+
+## Rejected Items Cross-Check Summary
+
+For completeness, the two rejected holdout items were also verified against the refreshed snapshot:
+- **RIV-HO-04** (*Amazon S3 Vectors GA in all commercial regions*):
+  - Page `AWSPG-R04` explicitly states: *"Amazon S3 Vectors is available in preview in the US East (N. Virginia), US East (Ohio), US West (Oregon), Europe (Frankfurt), and Asia Pacific (Sydney) Regions."*
+  - **Verdict**: Correctly **Rejected** because preview in five regions contradicts "generally available in all commercial AWS Regions" (Check 3 failed).
+- **RIV-HO-05** (*AWS Lambda 60-minute timeout increase*):
+  - The snapshot contains only page `AWSPG-R06` covering Lambda asynchronous payload increases from 256 KB to 1 MB. There is no official announcement page regarding a 60-minute function timeout.
+  - **Verdict**: Correctly **Rejected** because no official AWS page exists in the snapshot (Check 1 failed).
