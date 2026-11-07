@@ -46,7 +46,7 @@ tests/test_safety.py::test_rejected_items_have_reason PASSED             [100%]
 ============================== 2 passed in 0.01s ===============================
 
 [SAFETY GATE PASSED] All safety checks passed successfully.
-built briefing.html
+built index.html
 wrote results.md
 
 ================== CONFIRMED LIST ==================

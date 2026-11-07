@@ -19,7 +19,7 @@ RULE_FILE = "docs/confirm_rule.md"
 SNAPSHOT = os.environ.get("SNAPSHOT_FILE", "data/aws_official_source_snapshot_refresh.json" if os.path.exists("data/aws_official_source_snapshot_refresh.json") else "data/aws_official_source_snapshot.json")
 CANDIDATES = os.environ.get("CANDIDATES_FILE", "data/aws_reinvent_candidate_items_holdout.csv" if os.path.exists("data/aws_reinvent_candidate_items_holdout.csv") else "data/aws_reinvent_candidate_items.csv")
 RESULTS = "results.md"
-BRIEFING_HTML = "briefing.html"
+BRIEFING_HTML = "index.html"
 SPLIT_FILE = "data/split_results.json"
 
 base_url = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
@@ -535,8 +535,6 @@ def build_briefing_html(evaluated_items: list, confirmed: list, rejected: list) 
 """
     with open(BRIEFING_HTML, "w", encoding="utf-8") as f:
         f.write(full_html)
-    with open("index.html", "w", encoding="utf-8") as f:
-        f.write(full_html)
     print(f"built {BRIEFING_HTML}")
 
 
@@ -595,7 +593,7 @@ def main(ids: list) -> None:
     # Safety gate: runs tests/test_safety.py and stops before building anything if it fails
     run_safety_gate()
 
-    # Build briefing.html
+    # Build index.html
     build_briefing_html(evaluated_items, confirmed, rejected)
 
     if not ids:
