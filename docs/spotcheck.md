@@ -1,6 +1,6 @@
 # Spot Check: Confirmed Claims Verification
 
-This document provides human audit verification for each Confirmed claim from the 3 November 2025 holdout batch (`data/aws_reinvent_candidate_items_holdout.csv`), checked against the official AWS page copies in `data/aws_official_source_snapshot_refresh.json`.
+This document provides human audit verification for each Confirmed claim from the 3 November 2025 candidate batch (`data/aws_reinvent_candidate_items.csv`), checked against the official AWS page copies in `data/aws_official_source_snapshot.json`.
 
 For each confirmed item, every individual fact asserted by the claim is audited against the exact words in the official source quote.
 

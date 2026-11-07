@@ -2,7 +2,7 @@
 
 Rules live in docs/confirm_rule.md. The fact-checker reads that file on every run.
 """
-import csv, json, os, re, subprocess, sys, time
+import asyncio, atexit, csv, json, os, re, subprocess, sys, time
 from typing import Optional, TypedDict
 from urllib.parse import urlparse
 
@@ -16,9 +16,9 @@ from langsmith.wrappers import wrap_openai
 from openai import APIStatusError, OpenAI
 
 RULE_FILE = "docs/confirm_rule.md"
-SNAPSHOT = os.environ.get("SNAPSHOT_FILE", "data/aws_official_source_snapshot_refresh.json" if os.path.exists("data/aws_official_source_snapshot_refresh.json") else "data/aws_official_source_snapshot.json")
-CANDIDATES = os.environ.get("CANDIDATES_FILE", "data/aws_reinvent_candidate_items_holdout.csv" if os.path.exists("data/aws_reinvent_candidate_items_holdout.csv") else "data/aws_reinvent_candidate_items.csv")
-RESULTS = "results.md"
+SNAPSHOT = os.environ.get("SNAPSHOT_FILE", "data/aws_official_source_snapshot.json")
+CANDIDATES = os.environ.get("CANDIDATES_FILE", "data/aws_reinvent_candidate_items.csv")
+RESULTS = "docs/results.md"
 BRIEFING_HTML = "index.html"
 SPLIT_FILE = "data/split_results.json"
 
@@ -224,27 +224,59 @@ def run_candidate(row: dict) -> dict:
     return {k: v for k, v in final.items() if k != "row"}
 
 
-def share(run) -> str:
-    run.client.flush()
+_PROJECT_IDS: dict[str, str] = {}
+_RUNNER = asyncio.Runner()
+atexit.register(_RUNNER.close)
+
+
+async def _share_async(run) -> str:
+    project_name = run.session_name or os.environ.get("LANGSMITH_PROJECT", "default")
+    run_id = str(run.id)
+    trace_id = str(run.trace_id)
     for _ in range(15):
         try:
-            shared_url = run.client.share_run(run.trace_id)
-            token = urlparse(shared_url).path
-            break
+            project_id = _PROJECT_IDS.get(project_name)
+            if not project_id:
+                project = await run.client.aread_project(project_name=project_name)
+                project_id = str(project.id)
+                _PROJECT_IDS[project_name] = project_id
+
+            share_resp = await run.client.runs.share.create(
+                run_id,
+                session_id=project_id,
+                trace_id=trace_id,
+            )
+            if not share_resp.share_token:
+                raise RuntimeError("The server did not return a share token")
+            authenticated_run = await run.client.runs.retrieve(
+                run_id,
+                project_id=project_id,
+                start_time=run.start_time,
+                selects=["SHARE_URL"],
+            )
+            if authenticated_run.share_url:
+                return authenticated_run.share_url
         except Exception:
-            try:
-                shared_url = run.client.read_run_shared_link(run.trace_id)
-                token = urlparse(shared_url).path
-                break
-            except Exception:
-                time.sleep(2)
-    else:
-        raise RuntimeError(f"could not share trace {run.trace_id}")
-    ui_url = os.environ.get("LANGSMITH_UI_URL")
-    if not ui_url:
-        endpoint = os.environ.get("LANGSMITH_ENDPOINT", "")
-        ui_url = "https://aws.smith.langchain.com" if "aws" in endpoint else "https://smith.langchain.com"
-    return ui_url.rstrip("/") + token
+            project_id = _PROJECT_IDS.get(project_name)
+            if project_id:
+                try:
+                    authenticated_run = await run.client.runs.retrieve(
+                        run_id,
+                        project_id=project_id,
+                        start_time=run.start_time,
+                        selects=["SHARE_URL"],
+                    )
+                    if authenticated_run.share_url:
+                        return authenticated_run.share_url
+                except Exception:
+                    pass
+        await asyncio.sleep(2)
+    raise RuntimeError(f"could not share trace {trace_id}")
+
+
+def share(run) -> str:
+    run.client.flush()
+    return _RUNNER.run(_share_async(run))
 
 
 def cell(text: str) -> str:
@@ -597,6 +629,7 @@ def main(ids: list) -> None:
     build_briefing_html(evaluated_items, confirmed, rejected)
 
     if not ids:
+        os.makedirs(os.path.dirname(RESULTS), exist_ok=True)
         open(RESULTS, "w", encoding="utf-8").write("\n".join(lines) + "\n")
         print(f"wrote {RESULTS}")
 

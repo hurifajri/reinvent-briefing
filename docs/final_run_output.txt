@@ -1,7 +1,3 @@
-/Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
-  warnings.warn(
-/Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/.venv/lib/python3.9/site-packages/langgraph/cache/base/__init__.py:8: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
-  from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 == RIV-HO-01 ==
   lead
   researcher
@@ -25,7 +21,7 @@
   researcher
   fact-checker
   lead (final verdict)
-  -> rejected: Check 3 failed: The quote says S3 Vectors is in preview in only five Regions, not generally available in all commercial AWS Regions.
+  -> rejected: Check 3 failed: The quote says S3 Vectors is available in preview in only five Regions, not generally available in all commercial AWS Regions.
 == RIV-HO-05 ==
   lead
   researcher
@@ -34,10 +30,10 @@
 
 Running safety gate (tests/test_safety.py)...
 ============================= test session starts ==============================
-platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/.venv/bin/python
+platform darwin -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing/.venv/bin/python
 cachedir: .pytest_cache
 rootdir: /Users/hurifajri/Developer/Projects/Personal/portfolio/reinvent-briefing
-plugins: anyio-4.12.1, langsmith-0.4.37
+plugins: langsmith-0.14.17, anyio-4.16.0
 collecting ... collected 2 items
 
 tests/test_safety.py::test_confirmed_items_have_aws_url_and_quote PASSED [ 50%]
@@ -47,7 +43,7 @@ tests/test_safety.py::test_rejected_items_have_reason PASSED             [100%]
 
 [SAFETY GATE PASSED] All safety checks passed successfully.
 built index.html
-wrote results.md
+wrote docs/results.md
 
 ================== CONFIRMED LIST ==================
 [RIV-HO-01] Amazon Quick Suite is now generally available, giving business users one agentic workspace for research, business intelligence and workflow automation.
@@ -55,28 +51,28 @@ wrote results.md
   Quote:      Amazon Quick Suite is now generally available, giving business users one agentic workspace for research, business intelligence and workflow automation. Quick Suite is an agentic teammate that answers questions at work and turns the answers into actions, without switching between tools.
 
 Quick Suite includes Quick Research for in-depth research across company data and trusted outside sources, Quick Sight for business intelligence dashboards and plain-language questions, Quick Flows for automating everyday tasks, and Quick Automate for multi-step business processes. Quick Index connects your documents and data so Quick Suite can find answers in them.
-  Trace Link: https://aws.smith.langchain.com/public/ffa644a4-5ead-4257-bedd-e94b5becefe0/r
+  Trace Link: https://aws.smith.langchain.com/public/edde4dcd-1cb5-4998-85e1-f9ef0c74eefb/r
 
 [RIV-HO-02] Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock, supporting long-running agent tasks and complex coding workloads for enterprise builders.
   Source URL: https://aws.amazon.com/bedrock/anthropic/
   Quote:      Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock, with support for long-running agent tasks and complex coding workloads for enterprise builders. Claude Sonnet 4.5 can keep working through multi-step tasks and large codebases, which suits teams automating software development and business workflows.
 
 You can call Claude Sonnet 4.5 through the Amazon Bedrock API, and build and run agents with it using Amazon Bedrock AgentCore.
-  Trace Link: https://aws.smith.langchain.com/public/b8f956c7-d3ca-4e45-b479-9dd452a82a54/r
+  Trace Link: https://aws.smith.langchain.com/public/58baa63d-0b71-49ec-8a2a-6c3de0a7a737/r
 
 [RIV-HO-03] Starting 15 July 2025 new AWS customers receive $100 in AWS Free Tier credits at sign-up and can earn up to $100 more by exploring key services.
   Source URL: https://aws.amazon.com/free/
   Quote:      Starting July 15, 2025, new AWS customers receive $100 in AWS Free Tier credits at sign-up and can earn up to $100 more by exploring key AWS services. Customers earn the extra credits by completing activities with services such as Amazon EC2, Amazon RDS, AWS Lambda, Amazon Bedrock and AWS Budgets.
-  Trace Link: https://aws.smith.langchain.com/public/e1d3e5f9-3677-450b-a7d7-19cdbf53a30b/r
+  Trace Link: https://aws.smith.langchain.com/public/bc3088ca-7de1-496c-8756-64a99853f6cd/r
 
 ================== REJECTED LIST ==================
 [RIV-HO-04] Amazon S3 Vectors is now generally available in all commercial AWS Regions, offering native vector storage and similarity query support for AI workloads.
   Source URL: https://aws.amazon.com/s3/features/vectors/
-  Reason:     Check 3 failed: The quote says S3 Vectors is in preview in only five Regions, not generally available in all commercial AWS Regions.
-  Trace Link: https://aws.smith.langchain.com/public/60dabd0b-43c4-4342-8e5b-e0a28c368f0e/r
+  Reason:     Check 3 failed: The quote says S3 Vectors is available in preview in only five Regions, not generally available in all commercial AWS Regions.
+  Trace Link: https://aws.smith.langchain.com/public/0379c94f-942c-4235-8273-f684c768d73c/r
 
 [RIV-HO-05] AWS Lambda is raising the maximum function timeout from 15 minutes to 60 minutes for all runtimes, rolling out to every Region before re:Invent 2025.
   Source URL: https://www.reddit.com/r/aws/
   Reason:     Check 1 failed: the snapshot has no page for this claim.
-  Trace Link: https://aws.smith.langchain.com/public/63c149c1-9208-41b5-a6e0-8450476d1d81/r
+  Trace Link: https://aws.smith.langchain.com/public/0bf3ecaa-f8a1-4174-8193-b2404d0d4be9/r
 

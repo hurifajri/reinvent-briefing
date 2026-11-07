@@ -5,8 +5,8 @@
       "claim": "Amazon Quick Suite is now generally available, giving business users one agentic workspace for research, business intelligence and workflow automation.",
       "source_url": "https://aws.amazon.com/quicksuite/",
       "url": "https://aws.amazon.com/quicksuite/",
-      "trace_link": "https://aws.smith.langchain.com/public/ffa644a4-5ead-4257-bedd-e94b5becefe0/r",
-      "trace": "https://aws.smith.langchain.com/public/ffa644a4-5ead-4257-bedd-e94b5becefe0/r",
+      "trace_link": "https://aws.smith.langchain.com/public/edde4dcd-1cb5-4998-85e1-f9ef0c74eefb/r",
+      "trace": "https://aws.smith.langchain.com/public/edde4dcd-1cb5-4998-85e1-f9ef0c74eefb/r",
       "quote": "Amazon Quick Suite is now generally available, giving business users one agentic workspace for research, business intelligence and workflow automation. Quick Suite is an agentic teammate that answers questions at work and turns the answers into actions, without switching between tools.\n\nQuick Suite includes Quick Research for in-depth research across company data and trusted outside sources, Quick Sight for business intelligence dashboards and plain-language questions, Quick Flows for automating everyday tasks, and Quick Automate for multi-step business processes. Quick Index connects your documents and data so Quick Suite can find answers in them."
     },
     {
@@ -14,8 +14,8 @@
       "claim": "Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock, supporting long-running agent tasks and complex coding workloads for enterprise builders.",
       "source_url": "https://aws.amazon.com/bedrock/anthropic/",
       "url": "https://aws.amazon.com/bedrock/anthropic/",
-      "trace_link": "https://aws.smith.langchain.com/public/b8f956c7-d3ca-4e45-b479-9dd452a82a54/r",
-      "trace": "https://aws.smith.langchain.com/public/b8f956c7-d3ca-4e45-b479-9dd452a82a54/r",
+      "trace_link": "https://aws.smith.langchain.com/public/58baa63d-0b71-49ec-8a2a-6c3de0a7a737/r",
+      "trace": "https://aws.smith.langchain.com/public/58baa63d-0b71-49ec-8a2a-6c3de0a7a737/r",
       "quote": "Anthropic's Claude Sonnet 4.5 is now available in Amazon Bedrock, with support for long-running agent tasks and complex coding workloads for enterprise builders. Claude Sonnet 4.5 can keep working through multi-step tasks and large codebases, which suits teams automating software development and business workflows.\n\nYou can call Claude Sonnet 4.5 through the Amazon Bedrock API, and build and run agents with it using Amazon Bedrock AgentCore."
     },
     {
@@ -23,8 +23,8 @@
       "claim": "Starting 15 July 2025 new AWS customers receive $100 in AWS Free Tier credits at sign-up and can earn up to $100 more by exploring key services.",
       "source_url": "https://aws.amazon.com/free/",
       "url": "https://aws.amazon.com/free/",
-      "trace_link": "https://aws.smith.langchain.com/public/e1d3e5f9-3677-450b-a7d7-19cdbf53a30b/r",
-      "trace": "https://aws.smith.langchain.com/public/e1d3e5f9-3677-450b-a7d7-19cdbf53a30b/r",
+      "trace_link": "https://aws.smith.langchain.com/public/bc3088ca-7de1-496c-8756-64a99853f6cd/r",
+      "trace": "https://aws.smith.langchain.com/public/bc3088ca-7de1-496c-8756-64a99853f6cd/r",
       "quote": "Starting July 15, 2025, new AWS customers receive $100 in AWS Free Tier credits at sign-up and can earn up to $100 more by exploring key AWS services. Customers earn the extra credits by completing activities with services such as Amazon EC2, Amazon RDS, AWS Lambda, Amazon Bedrock and AWS Budgets."
     }
   ],
@@ -34,17 +34,17 @@
       "claim": "Amazon S3 Vectors is now generally available in all commercial AWS Regions, offering native vector storage and similarity query support for AI workloads.",
       "source_url": "https://aws.amazon.com/s3/features/vectors/",
       "url": "https://aws.amazon.com/s3/features/vectors/",
-      "trace_link": "https://aws.smith.langchain.com/public/60dabd0b-43c4-4342-8e5b-e0a28c368f0e/r",
-      "trace": "https://aws.smith.langchain.com/public/60dabd0b-43c4-4342-8e5b-e0a28c368f0e/r",
-      "reason": "Check 3 failed: The quote says S3 Vectors is in preview in only five Regions, not generally available in all commercial AWS Regions."
+      "trace_link": "https://aws.smith.langchain.com/public/0379c94f-942c-4235-8273-f684c768d73c/r",
+      "trace": "https://aws.smith.langchain.com/public/0379c94f-942c-4235-8273-f684c768d73c/r",
+      "reason": "Check 3 failed: The quote says S3 Vectors is available in preview in only five Regions, not generally available in all commercial AWS Regions."
     },
     {
       "candidate_id": "RIV-HO-05",
       "claim": "AWS Lambda is raising the maximum function timeout from 15 minutes to 60 minutes for all runtimes, rolling out to every Region before re:Invent 2025.",
       "source_url": "https://www.reddit.com/r/aws/",
       "url": "https://www.reddit.com/r/aws/",
-      "trace_link": "https://aws.smith.langchain.com/public/63c149c1-9208-41b5-a6e0-8450476d1d81/r",
-      "trace": "https://aws.smith.langchain.com/public/63c149c1-9208-41b5-a6e0-8450476d1d81/r",
+      "trace_link": "https://aws.smith.langchain.com/public/0bf3ecaa-f8a1-4174-8193-b2404d0d4be9/r",
+      "trace": "https://aws.smith.langchain.com/public/0bf3ecaa-f8a1-4174-8193-b2404d0d4be9/r",
       "reason": "Check 1 failed: the snapshot has no page for this claim."
     }
   ]

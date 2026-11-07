@@ -1,5 +1,5 @@
 openai
 langgraph
-langsmith
+langsmith>=0.14.17
 python-dotenv
 pytest
